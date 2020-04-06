@@ -1,41 +1,38 @@
-def min_swaps(total_damage, string):
-    min_damage = string.count('S')
-    if min_damage > total_damage:
-        return 'IMPOSSIBLE'
-
-    max_damage = 0
-    pwr = 1
-    for e in string:
-        if e == 'S':
-            max_damage += pwr
+def damageCalc(arr):
+    damageRate = 1
+    totalDamage = 0
+    for i in arr:
+        if i == 'S':
+            totalDamage += damageRate
         else:
-            pwr *= 2
+            damageRate *= 2
+    return totalDamage
 
-    if max_damage <= total_damage:
-        return 0
 
-    s_so_far = 0
-    swaps = 0
-    # reduce the damage caused by robot in minimum swaps 
-    for e in reversed(string):
-        if e == 'S':
-            s_so_far += 1
-        else:
-            pwr //= 2
-            tmp = s_so_far*pwr
-            if max_damage - tmp > total_damage:
-                swaps += s_so_far
-                max_damage -= tmp
-            else:
-                swaps += abs(-(max_damage-total_damage)//pwr)
+def main():
+    for test in range(1, int(input()) + 1):
+        D, P = input().strip().split()
+        D, P = int(D), list(P)
+        count, totalSwaps = 0, 0
+        while True:
+            prevDamage = damageCalc(P)
+            if prevDamage <= D:
                 break
-    return swaps
+            else:
+                found_S = False
+            for i in range(len(P)):
+                loc = len(P) - i - 1
+                if P[loc] == 'S':
+                    found_S = True
+                elif found_S:
+                    P[loc] = 'S'
+                    P[loc + 1] = 'C'
+                    totalSwaps += 1
+                    break
+            if prevDamage == damageCalc(P):
+                break
+            count += 1
 
+        print('Case #{0}: {1}'.format(test, totalSwaps if damageCalc(P) <= D else 'IMPOSSIBLE'))
 
-if __name__ == '__main__':
-    t = int(input())
-    for x in range(1, t + 1):
-        td, s = input().strip().split()
-        td = int(td)
-        ans = min_swaps(td, s)
-        print('Case #{}: {}'.format(x, ans))
+main()
